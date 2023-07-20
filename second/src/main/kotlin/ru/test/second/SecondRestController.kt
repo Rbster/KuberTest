@@ -2,22 +2,19 @@ package ru.test.second
 
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestAttribute
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController("api/v1")
-class SecondRestController {
+class SecondRestController(val adapterFirst: AdapterFirst) {
     val log = LoggerFactory.getLogger(SecondRestController::class.java)
 
-    @GetMapping("echo/\${s}")
-    fun echo(@RequestAttribute s: String): String {
+    @GetMapping("get/{s}")
+    fun proxy(@PathVariable s: String): String {
         log.info("Got message < $s > on the Second service")
-        return s
+        val rs = adapterFirst.send(s)
+        log.info("Got message < $rs > from integration")
+        return rs
     }
 
-//    @GetMapping("echo")
-//    fun echo(s: String): String {
-//        log.info("Got message < $s > on the Second service")
-//        return s
-//    }
 }
